@@ -68,7 +68,7 @@ export async function modifyUser(
 ) {
   const { userId: param0 } = params;
   return request<API.Result_UserInfo_>(`/api/v1/user/${param0}`, {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },

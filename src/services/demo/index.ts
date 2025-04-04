@@ -1,7 +1,13 @@
 /* eslint-disable */
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 
-import * as UserController from './UserController';
+import * as LoginController from './login/LoginController';
+import * as LotteryController from './lottery/LotteryController';
+import * as UserController from './user/UserController';
+
+//
 export default {
   UserController,
+  LoginController,
+  LotteryController,
 };

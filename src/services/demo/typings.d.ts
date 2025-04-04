@@ -2,6 +2,28 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 
 declare namespace API {
+  type ResStatusEnum = 200 | 400 | 401 | 403 | 404 | 500;
+
+  interface loginReq {
+    username?: string;
+    password?: string;
+  }
+
+  interface BaseRes<T = any> {
+    status: ResStatusEnum;
+    message: string;
+    data?: T;
+  }
+
+  interface LoginRes extends BaseRes {
+    token?: string;
+  }
+
+  interface LotteryResult {
+    upperHalf: Array<number>;
+    lowerHalf: Array<number>;
+  }
+
   interface PageInfo {
     /** 
 1 */
@@ -54,6 +76,7 @@ declare namespace API {
     /** email */
     email?: string;
     gender?: UserGenderEnum;
+    token?: string;
   }
 
   interface UserInfoVO {
