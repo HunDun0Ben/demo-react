@@ -8,6 +8,8 @@
 /.umi
 /.umi-production
 /.umi-test
+/.gemini
+/.vscode
 /dist
 /.mfsu
 .swc
