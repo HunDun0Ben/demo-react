@@ -3,11 +3,9 @@
 
 import * as LoginController from './login/LoginController';
 import * as LotteryController from './lottery/LotteryController';
-import * as UserController from './user/UserController';
 
 //
 export default {
-  UserController,
   LoginController,
   LotteryController,
 };

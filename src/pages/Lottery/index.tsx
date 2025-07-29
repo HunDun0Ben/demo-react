@@ -14,8 +14,8 @@ const LotteryPage: React.FC = () => {
   const handleDraw = async () => {
     setLoading(true);
     getLotteryNumbers()
-      .then((response: API.BaseRes<API.LotteryResult>) => {
-        if (response.status === 200 && response.data) {
+      .then((response: API.AppRes<API.LotteryResult>) => {
+        if (response.code === 200 && response.data) {
           setNumbers(response.data);
           message.success('抽奖成功！');
         } else {

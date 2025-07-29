@@ -1,21 +1,38 @@
+// @ts-ignore
 /* eslint-disable */
-// 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from '@umijs/max';
 
+/** 用户登录 用户使用用户名和密码进行登录，成功后返回 JWT Token。 GET /login */
 export async function login(
-  body: API.loginReq,
+  body: API.LoginRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.LoginRes>('/api/login', {
+  return request<API.AppRes<API.LoginResponse>>('/api/login', {
     method: 'GET',
     params: body,
     ...(options || {}),
   });
 }
 
+/** 用户登出 用户登出，将当前 Access Token 加入黑名单使其失效 POST /logout */
 export async function logout(options?: { [key: string]: any }) {
-  return request<API.AppRes<any>>('/api/logout', {
+  return request<API.AppRes>('/api/logout', {
     method: 'POST',
+    ...(options || {}),
+  });
+}
+
+/** 刷新 Access Token 使用 Refresh Token 获取一个新的 Access Token POST /token/refresh */
+export async function tokenRefresh(
+  body: API.RefreshTokenRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.AppRes<API.RefreshTokenResponse>>('/api/token/refresh', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }

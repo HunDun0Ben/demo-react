@@ -1,9 +1,9 @@
 import { logout } from '@/services/demo/login/LoginController';
 import { LogoutOutlined } from '@ant-design/icons';
-import { history, useModel } from '@umijs/max';
-import type { MenuProps } from 'antd';
-import { Menu, message } from 'antd';
+import { useModel } from '@umijs/max';
+import { Menu, type MenuProps, message } from 'antd';
 import React from 'react';
+import { history } from 'umi';
 
 // 用户菜单项
 const menuItems: MenuProps['items'] = [
@@ -16,7 +16,7 @@ const menuItems: MenuProps['items'] = [
 
 // 处理点击事件
 const UserDropdown: React.FC = () => {
-  const { setInitialState, refresh } = useModel('@@initialState');
+  const { refresh } = useModel('@@initialState');
 
   const onMenuClick: MenuProps['onClick'] = async ({ key }) => {
     if (key === 'logout') {
@@ -28,7 +28,6 @@ const UserDropdown: React.FC = () => {
       }
       // 前端清理逻辑
       localStorage.clear();
-      setInitialState({});
       refresh();
       history.push('/login');
       message.success('用户已注销');

@@ -17,11 +17,30 @@ export default [
   {
     name: '权限演示',
     path: '/access',
+    access: 'isAdmin',
     component: './Access',
   },
   {
     path: '/lottery',
     name: '抽奖',
     component: './Lottery',
+  },
+  {
+    path: '/butterfly_info',
+    name: '蝴蝶信息',
+    icon: 'setting',
+    routes: [
+      {
+        path: '/butterfly_info',
+        name: '蝴蝶信息列表',
+        component: './ButterflyInfo',
+      },
+      {
+        path: '/butterfly_info/upload',
+        name: '上传图片',
+        icon: 'upload',
+        component: './ButterflyInfo/Upload',
+      },
+    ],
   },
 ];

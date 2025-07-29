@@ -1,29 +1,25 @@
 import { login } from '@/services/demo/login/LoginController';
+import { isLogined } from '@/utils/auth';
 import { Button, Form, Input, message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { history, useModel } from 'umi';
 
 const LoginPage: React.FC = () => {
-  const { initialState, refresh } = useModel('@@initialState');
+  const { refresh } = useModel('@@initialState');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (initialState?.currentUser) {
-      history.push('/home');
-      message.info('您已登录，已自动跳转到首页。');
-    }
-  }, [initialState]);
+  if (isLogined()) {
+    history.push('/home');
+    message.info('您已登录，已自动跳转到首页。');
+  }
 
-  const handleLogin = async (req: API.loginReq) => {
+  const handleLogin = async (req: API.LoginRequest) => {
     setLoading(true);
     try {
       const response = await login(req);
-
       if (response.code === 200) {
         // 1. 保存登录信息
         localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-        localStorage.setItem('username', req.username || '');
         // 2. 刷新全局状态，并等待其完成
         await refresh();
         history.push('/home');

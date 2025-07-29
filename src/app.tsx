@@ -1,15 +1,8 @@
 // src/app.ts
 import RightContent from '@/components/RightContent';
-import { fetchLocalUserInfo } from '@/utils/auth';
+import { fetchLocalUserInfo, isAcccessTokenValid } from '@/utils/auth';
 import { message } from 'antd';
 import { history, type RequestConfig, type RunTimeLayoutConfig } from 'umi';
-
-function isAcccessTokenValid(exp: number): boolean {
-  if (exp < Date.now()) {
-    return false;
-  }
-  return true;
-}
 
 // 定义初始状态类型
 export interface InitialStateType {
@@ -33,7 +26,6 @@ export const layout: RunTimeLayoutConfig = ({}) => {
 // 获取初始状态
 export async function getInitialState(): Promise<InitialStateType> {
   const currentUser = await fetchLocalUserInfo();
-
   // todo: 其他信息的初始化
   return {
     currentUser,
@@ -58,6 +50,12 @@ export const request: RequestConfig = {
   },
   requestInterceptors: [
     (url: string, options: any) => {
+      const isLoginRequest =
+        url.includes('/login') || url.includes('/token/refresh');
+      if (isLoginRequest) {
+        return { url, options };
+      }
+
       const accessToken = localStorage.getItem('accessToken');
       const expStr = localStorage.getItem('tokenExp');
       const exp = expStr ? parseInt(expStr, 10) : 0;
@@ -66,6 +64,8 @@ export const request: RequestConfig = {
         localStorage.clear();
         history.push(loginPath);
         // 返回一个空的promise来中断请求
+        // 停止请求
+        console.log(`cancel request ${url}`);
         return new Promise(() => {});
       }
       if (accessToken) {

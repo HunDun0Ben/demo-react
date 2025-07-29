@@ -4,9 +4,7 @@
  */
 export const fetchLocalUserInfo = async (): Promise<API.UserInfo | null> => {
   const accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
-  const username = localStorage.getItem('username');
-  if (!accessToken || !refreshToken || !username) {
+  if (!accessToken) {
     return null;
   }
   try {
@@ -16,12 +14,25 @@ export const fetchLocalUserInfo = async (): Promise<API.UserInfo | null> => {
     }
     localStorage.setItem('tokenExp', String(payload.exp * 1000));
     return {
-      username,
-      accessToken,
-      refreshToken,
+      username: payload.username,
+      roles: payload.roles,
     };
   } catch (error) {
     console.error('Failed to parse token or fetch user info:', error);
     return null;
   }
 };
+
+export function isAcccessTokenValid(exp: number): boolean {
+  if (exp < Date.now()) {
+    return false;
+  }
+  return true;
+}
+
+export function isLogined(): boolean {
+  const accessToken = localStorage.getItem('accessToken');
+  const expStr = localStorage.getItem('tokenExp');
+  const exp = expStr ? parseInt(expStr, 10) : 0;
+  return !!accessToken && isAcccessTokenValid(exp);
+}

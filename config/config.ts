@@ -5,7 +5,7 @@ export default defineConfig({
   mock: false,
   proxy: {
     '/api': {
-      target: 'http://localhost:33456/demo', // 目标后端接口域名
+      target: 'http://localhost:8080/api/v1', // 目标后端接口域名
       changeOrigin: true, // 用于修改请求头中的 `Origin` 字段
       pathRewrite: { '^/api': '' }, // 可选: 重写路径，将 `/api` 去除
     },

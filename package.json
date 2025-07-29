@@ -6,6 +6,7 @@
     "dev": "max dev",
     "format": "prettier --write .",
     "postinstall": "max setup",
+    "openapi2ts": "openapi2ts",
     "prepare": "husky",
     "setup": "max setup",
     "start": "npm run dev"
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
+    "@umijs/openapi": "^1.13.15",
     "husky": "^9",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",

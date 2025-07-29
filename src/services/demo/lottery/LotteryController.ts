@@ -1,7 +1,7 @@
 import { request } from '@umijs/max';
 
 export async function getLotteryNumbers(): Promise<
-  API.BaseRes<API.LotteryResult>
+  API.AppRes<API.LotteryResult>
 > {
   return request('/api/lottery/bigLottery/random', {
     method: 'GET',
