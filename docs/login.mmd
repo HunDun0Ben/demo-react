@@ -1,0 +1,39 @@
+sequenceDiagram
+    actor User
+    participant LoginPage
+    participant RightContent
+    participant Umi as Umi
+    participant API as API
+
+    %% 登录流程
+    rect rgb(230, 255, 255)
+    User->>LoginPage: 1. 输入用户名和密码，点击登录
+    LoginPage->>API: 2. 发送登录请求 (POST /api/login)
+    API-->>LoginPage: 3. 验证成功，返回JWT Token
+    Note right of LoginPage: 4. 存储Token和用户信息到localStorage
+    LoginPage->>Umi: 5. 调用 refresh() 刷新全局状态
+    Umi->>Umi: 6. 重新执行 getInitialState()
+    Umi->>Umi: 7. 从localStorage读取并验证Token
+    Umi-->>LoginPage: 8. 更新全局状态 (initialState)
+    LoginPage->>Umi: 9. 用户状态变化，跳转主页
+    end
+
+    %% 访问受保护页面
+    rect rgb(255, 245, 230)
+    User->>Umi: 10. 导航到 /home
+    Umi->>API: 11. 发起数据请求（请求头携带Token）
+    API-->>Umi: 12. 验证Token，返回页面数据
+    Umi-->>User: 13. 渲染页面
+    end
+
+    %% 退出流程
+    rect rgb(255, 230, 240)
+    User->>RightContent: 14. 点击“退出登录”
+    RightContent->>API: 15. (可选) 发送注销请求 (POST /api/logout)
+    API-->>RightContent: 16. 后端完成注销
+    Note right of RightContent: 17. 清理localStorage
+    RightContent->>Umi: 18. 调用 refresh() 刷新全局状态
+    Umi->>Umi: 19. 重新执行 getInitialState()
+    Umi->>Umi: 20. 因无Token，获取不到用户信息
+    Umi->>User: 21. 自动重定向到登录页
+    end
