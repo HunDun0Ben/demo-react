@@ -7,12 +7,15 @@ export async function login(
   options?: { [key: string]: any },
 ) {
   return request<API.LoginRes>('/api/login', {
+    method: 'GET',
+    params: body,
+    ...(options || {}),
+  });
+}
+
+export async function logout(options?: { [key: string]: any }) {
+  return request<API.AppRes<any>>('/api/logout', {
     method: 'POST',
-    // 使用 `data` 来传递表单数据
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    data: 'username=name1&password=name1',
     ...(options || {}),
   });
 }

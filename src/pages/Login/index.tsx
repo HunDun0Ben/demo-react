@@ -1,49 +1,44 @@
 import { login } from '@/services/demo/login/LoginController';
-import { Access, useAccess } from '@umijs/max';
 import { Button, Form, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { history, useModel } from 'umi';
 
 const LoginPage: React.FC = () => {
-  const access = useAccess();
   const { initialState, refresh } = useModel('@@initialState');
   const [loading, setLoading] = useState(false);
 
-  // 添加登录状态检查
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token && initialState?.currentUser) {
-      message.success('您已登录');
+    if (initialState?.currentUser) {
       history.push('/home');
+      message.info('您已登录，已自动跳转到首页。');
     }
   }, [initialState]);
 
-  const handleLogin = async (values: API.loginReq) => {
+  const handleLogin = async (req: API.loginReq) => {
     setLoading(true);
-    // 模拟登录请求
-    login(values)
-      .then((response: API.LoginRes) => {
-        console.debug('请求成功', response.status);
-        if (response.status === 200) {
-          // 1. 保存登录信息
-          localStorage.setItem('token', 'fake-token');
-          localStorage.setItem('username', values.username || '');
-          // 2. 刷新全局状态
-          return refresh();
-        } else if (response.status === 401) {
-          message.success('登录失败！');
-        }
-      })
-      .then(() => {
-        message.success('登录成功！');
-        history.push('/home'); // 跳转到主页
-      })
-      .catch((error) => {
-        console.error('请求失败', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const response = await login(req);
+
+      if (response.code === 200) {
+        // 1. 保存登录信息
+        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('username', req.username || '');
+        // 2. 刷新全局状态，并等待其完成
+        await refresh();
+        history.push('/home');
+        message.success('登录成功');
+      } else {
+        // 登录失败，显示错误信息
+        message.error(response.message || '登录失败，请检查您的用户名和密码！');
+      }
+    } catch (error) {
+      // 网络请求失败等异常情况
+      console.error('登录请求出错:', error);
+      message.error('登录时发生错误，请稍后重试。');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,13 +61,6 @@ const LoginPage: React.FC = () => {
             登录
           </Button>
         </Form.Item>
-        <Access accessible={access.canSeeAdmin}>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block>
-              登录
-            </Button>
-          </Form.Item>
-        </Access>
       </Form>
     </div>
   );

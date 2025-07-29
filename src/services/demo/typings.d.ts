@@ -5,19 +5,22 @@ declare namespace API {
   type ResStatusEnum = 200 | 400 | 401 | 403 | 404 | 500;
 
   interface loginReq {
-    username?: string;
-    password?: string;
+    username: string;
+    password: string;
   }
 
-  interface BaseRes<T = any> {
-    status: ResStatusEnum;
+  interface AppRes<T = any> {
+    code: ResStatusEnum;
     message: string;
-    data?: T;
+    data: T;
   }
 
-  interface LoginRes extends BaseRes {
-    token?: string;
+  interface LoginData {
+    accessToken: string;
+    refreshToken: string;
   }
+
+  type LoginRes = AppRes<LoginData>;
 
   interface LotteryResult {
     upperHalf: Array<number>;
@@ -70,13 +73,15 @@ declare namespace API {
 
   interface UserInfo {
     id?: string;
-    name?: string;
+    username?: string;
     /** nick */
     nickName?: string;
     /** email */
     email?: string;
     gender?: UserGenderEnum;
     token?: string;
+    accessToken?: string;
+    refreshToken?: string;
   }
 
   interface UserInfoVO {
@@ -88,4 +93,12 @@ declare namespace API {
   }
 
   type definitions_0 = null;
+
+  interface Butterfly {
+    id: string;
+    chinese_name: string;
+    english_name: string;
+    latin_name: string;
+    feature_description: string;
+  }
 }
