@@ -20,6 +20,14 @@ declare namespace API {
     email?: string;
     gender?: UserGenderEnum;
     roles?: string[];
+    exp?: number;
+  }
+
+  interface TokenInfo {
+    accessToken: string;
+    username: string;
+    roles: string[];
+    exp: number;
   }
 
   interface UserInfoVO {

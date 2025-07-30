@@ -2,6 +2,8 @@ import { defineConfig } from '@umijs/max';
 import routes from './routes/routes';
 
 export default defineConfig({
+  base: '/',
+  publicPath: '/',
   mock: false,
   proxy: {
     '/api': {

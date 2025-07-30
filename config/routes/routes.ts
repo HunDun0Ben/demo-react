@@ -1,7 +1,7 @@
 export default [
   {
     path: '/',
-    redirect: '/home',
+    redirect: '/login',
   },
   {
     name: '首页',
@@ -26,7 +26,6 @@ export default [
     component: './Lottery',
   },
   {
-    path: '/butterfly_info',
     name: '蝴蝶信息',
     icon: 'setting',
     routes: [

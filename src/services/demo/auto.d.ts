@@ -18,7 +18,7 @@ declare namespace API {
 
   type RefreshTokenResponse = {
     /** 新的 JWT 访问令牌 */
-    accessToken?: string;
+    accessToken: string;
   };
 
   type SwaggerResponse = {

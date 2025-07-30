@@ -16,23 +16,20 @@ export async function login(
 
 /** 用户登出 用户登出，将当前 Access Token 加入黑名单使其失效 POST /logout */
 export async function logout(options?: { [key: string]: any }) {
-  return request<API.AppRes>('/api/logout', {
+  return request<API.AppRes<API.LoginResponse>>('/api/logout', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
 /** 刷新 Access Token 使用 Refresh Token 获取一个新的 Access Token POST /token/refresh */
-export async function tokenRefresh(
-  body: API.RefreshTokenRequest,
-  options?: { [key: string]: any },
-) {
+export async function tokenRefresh(options?: { [key: string]: any }) {
   return request<API.AppRes<API.RefreshTokenResponse>>('/api/token/refresh', {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
