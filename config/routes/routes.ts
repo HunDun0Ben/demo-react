@@ -28,14 +28,15 @@ export default [
   {
     name: '蝴蝶信息',
     icon: 'setting',
+    path: '/user',
     routes: [
       {
-        path: '/butterfly_info',
+        path: '/user/butterfly_info',
         name: '蝴蝶信息列表',
         component: './ButterflyInfo',
       },
       {
-        path: '/butterfly_info/upload',
+        path: '/user/upload',
         name: '上传图片',
         icon: 'upload',
         component: './ButterflyInfo/Upload',

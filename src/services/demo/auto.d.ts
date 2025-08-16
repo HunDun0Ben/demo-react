@@ -29,4 +29,9 @@ declare namespace API {
     /** 响应消息 */
     message?: string;
   };
+
+  type UploadImgRes = {
+    fileId?: string;
+    fileName?: string;
+  };
 }
