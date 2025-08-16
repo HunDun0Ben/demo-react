@@ -27,6 +27,11 @@ const ButterflyPage: React.FC = () => {
 
   const columns = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '中文名称',
       dataIndex: 'chinese_name',
       key: 'chinese_name',
@@ -47,11 +52,6 @@ const ButterflyPage: React.FC = () => {
       key: 'feature_description',
       width: '40%',
     },
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
   ];
 
   return (
@@ -60,7 +60,7 @@ const ButterflyPage: React.FC = () => {
         <Table
           columns={columns}
           dataSource={butterflies}
-          rowKey="_id"
+          rowKey="id"
           loading={loading}
         />
       </Card>
