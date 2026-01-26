@@ -1,5 +1,5 @@
 import { getLotteryNumbers } from '@/services/demo/lottery/LotteryController';
-import { debounce } from '@/utils/debounce';
+import { debounce } from '@/utils/common/debounce';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Col, message, Row } from 'antd';
 import React, { useState } from 'react';
@@ -16,8 +16,12 @@ const LotteryPage: React.FC = () => {
     getLotteryNumbers()
       .then((response: API.AppRes<API.LotteryResult>) => {
         if (response.code === 200 && response.data) {
-          setNumbers(response.data);
-          message.success('抽奖成功！');
+          // 对 upperHalf 和 lowerHalf 进行从小到大排序
+          const sortedData = {
+            upperHalf: [...response.data.upperHalf].sort((a, b) => a - b),
+            lowerHalf: [...response.data.lowerHalf].sort((a, b) => a - b),
+          };
+          setNumbers(sortedData);
         } else {
           message.error('抽奖失败！');
         }

@@ -4,11 +4,6 @@
 declare namespace API {
   type ResStatusEnum = 200 | 400 | 401 | 403 | 404 | 500;
 
-  interface LotteryResult {
-    upperHalf: Array<number>;
-    lowerHalf: Array<number>;
-  }
-
   type UserGenderEnum = 'MALE' | 'FEMALE';
 
   interface UserInfo {

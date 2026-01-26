@@ -1,4 +1,4 @@
-import { getButterflies } from '@/services/demo/butterfly_info/ButterflyController';
+import { getButterflies } from '@/services/demo/butterfly-info/ButterflyController';
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Table } from 'antd';
 import React, { useEffect, useState } from 'react';

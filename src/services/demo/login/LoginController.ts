@@ -8,8 +8,8 @@ export async function login(
   options?: { [key: string]: any },
 ) {
   return request<API.AppRes<API.LoginResponse>>('/api/login', {
-    method: 'GET',
-    params: body,
+    method: 'POST',
+    data: body,
     ...(options || {}),
   });
 }

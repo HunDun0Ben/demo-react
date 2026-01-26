@@ -23,12 +23,13 @@ export interface InitialStateType {
 
 // 获取初始状态
 export async function getInitialState(): Promise<InitialStateType> {
-  console.log('getInitialState');
+  console.log('应用初始化');
   const currentUser = await fetchLocalUserInfo();
   if (!currentUser) {
+    // 根据具体需求决定是否跳转
     NoLoginedHandler();
   }
-  // todo: 其他信息的初始化
+  // todo: 其他信息的初始化, 例如加载一些其他配置
   return {
     currentUser,
   };

@@ -31,7 +31,7 @@ export default [
     path: '/user',
     routes: [
       {
-        path: '/user/butterfly_info',
+        path: '/user/butterfly-info',
         name: '蝴蝶信息列表',
         component: './ButterflyInfo',
       },
