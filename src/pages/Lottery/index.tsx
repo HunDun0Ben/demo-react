@@ -1,4 +1,4 @@
-import { getLotteryNumbers } from '@/services/demo/lottery/LotteryController';
+import { lotteryBigLotteryRandom } from '@/services/demo/lotteryController';
 import { debounce } from '@/utils/common/debounce';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Col, message, Row } from 'antd';
@@ -13,7 +13,7 @@ const LotteryPage: React.FC = () => {
 
   const handleDraw = async () => {
     setLoading(true);
-    getLotteryNumbers()
+    lotteryBigLotteryRandom()
       .then((response: API.AppRes<API.LotteryResult>) => {
         if (response.code === 200 && response.data) {
           // 对 upperHalf 和 lowerHalf 进行从小到大排序

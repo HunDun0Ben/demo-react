@@ -1,4 +1,4 @@
-import { tokenRefresh } from '@/services/demo/login/LoginController';
+import { tokenRefresh } from '@/services/demo/loginController';
 import {
   getLocalAccessToken,
   isLogined,
@@ -29,9 +29,21 @@ export const requestConfig: RequestConfig = {
       if (error.response) {
         // The request was made and the server responded with a status code
         if (error.response.status === 401) {
-          history.push(loginPath);
-          NoLoginedHandler();
-          message.info('登录已过期. 请重新登录.');
+          // 检查是否是登录相关的请求
+          const requestUrl =
+            error.request.responseURL || error.request.url || error.config.url;
+          const isLoginRequest =
+            requestUrl.includes('/login') ||
+            requestUrl.includes('/token/refresh');
+          if (isLoginRequest) {
+            // 如果是登录请求返回401，则表示登录失败，不是登录过期
+            message.error('登录失败.');
+          } else {
+            // 其他请求返回401，表示登录已过期
+            history.push(loginPath);
+            NoLoginedHandler();
+            message.info('登录已过期. 请重新登录.');
+          }
         } else {
           message.error(error.response.data?.message || '请求失败');
         }

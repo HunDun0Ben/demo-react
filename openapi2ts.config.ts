@@ -29,15 +29,17 @@ function genDefaultFunctionName(path: string) {
 export default {
   requestLibPath: "import { request } from '@umijs/max'",
   schemaPath: 'http://localhost:8080/swagger/doc.json',
-  serversPath: './servers',
-  projectName: 'butterfly',
+  serversPath: './src/services',
+  projectName: 'demo',
+  apiPrefix: '"/api"',
   mock: false,
   namespace: 'API',
+  splitDeclare: true,
   hook: {
     customFunctionName(data: { path: any }) {
       const path = data.path;
       const name = genDefaultFunctionName(path);
-      console.log(name);
+      console.log('name: ' + name);
       return name;
     },
   },

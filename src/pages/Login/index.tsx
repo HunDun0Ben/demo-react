@@ -1,4 +1,4 @@
-import { login } from '@/services/demo/login/LoginController';
+import { login } from '@/services/demo/loginController';
 import { isLogined, LoginHandler, parseAccessToken } from '@/utils/auth';
 import { Button, Form, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';

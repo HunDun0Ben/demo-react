@@ -1,4 +1,4 @@
-import { logout } from '@/services/demo/login/LoginController';
+import { logout } from '@/services/demo/loginController';
 import { LogoutOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Menu, type MenuProps, message } from 'antd';

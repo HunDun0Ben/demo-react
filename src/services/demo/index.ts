@@ -1,13 +1,16 @@
+// @ts-ignore
 /* eslint-disable */
-// 该文件由 OneAPI 自动生成，请勿手动修改！
-
-import * as LoginController from './login/LoginController';
-import * as LotteryController from './lottery/LotteryController';
-import * as UserController from './user/UserController';
-
-//
+// API 更新时间：
+// API 唯一标识：
+import * as loginController from './loginController';
+import * as lotteryController from './lotteryController';
+import * as managerController from './managerController';
+import * as testController from './testController';
+import * as userController from './userController';
 export default {
-  LoginController,
-  LotteryController,
-  UserController,
+  loginController,
+  lotteryController,
+  managerController,
+  testController,
+  userController,
 };

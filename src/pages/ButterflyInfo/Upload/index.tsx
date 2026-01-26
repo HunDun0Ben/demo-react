@@ -1,4 +1,4 @@
-import { userUploadImg } from '@/services/demo/user/UserController';
+import { userUploadImg } from '@/services/demo/userController';
 import { InboxOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Upload, message } from 'antd';

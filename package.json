@@ -6,7 +6,7 @@
     "dev": "max dev",
     "format": "prettier --write .",
     "postinstall": "max setup",
-    "openapi2ts": "openapi2ts",
+    "openapi2ts": "openapi2ts && node scripts/replace-swagger-response.js",
     "prepare": "husky",
     "setup": "max setup",
     "start": "npm run dev"

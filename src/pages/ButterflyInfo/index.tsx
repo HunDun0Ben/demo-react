@@ -1,17 +1,17 @@
-import { getButterflies } from '@/services/demo/butterfly-info/ButterflyController';
+import { userButterflyTypeInfo } from '@/services/demo/userController';
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 const ButterflyPage: React.FC = () => {
-  const [butterflies, setButterflies] = useState<API.Butterfly[]>([]);
+  const [butterflies, setButterflies] = useState<API.Insect[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await getButterflies();
+        const response = await userButterflyTypeInfo();
         if (response?.data) {
           setButterflies(response.data);
         }
