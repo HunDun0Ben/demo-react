@@ -55,14 +55,17 @@ export async function userMfaVerifyTotp(
   body: API.TOTPVerifyReq,
   options?: { [key: string]: any },
 ) {
-  return request<API.TOTPVerifyRes>(`/api/user/mfa/verify/totp`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  return request<API.AppRes & { data?: API.TOTPVerifyRes }>(
+    `/api/user/mfa/verify/totp`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
     },
-    data: body,
-    ...(options || {}),
-  });
+  );
 }
 
 /** 上传图片 上传图片文件到服务器 POST /user/uploadImg */

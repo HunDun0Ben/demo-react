@@ -1,5 +1,5 @@
 import { logout } from '@/services/demo/loginController';
-import { LogoutOutlined } from '@ant-design/icons';
+import { LockOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { Menu, type MenuProps, message } from 'antd';
 import React from 'react';
@@ -7,6 +7,11 @@ import { history } from 'umi';
 
 // 用户菜单项
 const menuItems: MenuProps['items'] = [
+  {
+    key: 'mfa-setup',
+    icon: <LockOutlined />,
+    label: '设置MFA',
+  },
   {
     key: 'logout',
     icon: <LogoutOutlined />,
@@ -19,7 +24,10 @@ const UserDropdown: React.FC = () => {
   const { refresh } = useModel('@@initialState');
 
   const onMenuClick: MenuProps['onClick'] = async ({ key }) => {
-    if (key === 'logout') {
+    if (key === 'mfa-setup') {
+      // 跳转到MFA设置页面
+      history.push('/account/mfa');
+    } else if (key === 'logout') {
       try {
         await logout(); // 调用后端注销接口
       } catch (error) {

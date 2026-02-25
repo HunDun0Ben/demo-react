@@ -43,4 +43,16 @@ export default [
       },
     ],
   },
+  {
+    path: '/account',
+    name: '账户',
+    hideInMenu: true,
+    routes: [
+      {
+        path: '/account/mfa',
+        name: 'MFA设置',
+        component: './account/mfa',
+      },
+    ],
+  },
 ];
