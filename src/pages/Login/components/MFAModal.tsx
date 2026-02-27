@@ -28,7 +28,7 @@ const MFAModal: React.FC<MFAModalProps> = ({
         message.error(response.message || '验证失败');
       }
     } catch (error: any) {
-      // Error is handled by errorHandler, but we need to stop loading
+      message.error('MFA 验证请求失败，请稍后再试。');
     } finally {
       setLoading(false);
     }
