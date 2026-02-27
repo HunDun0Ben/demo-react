@@ -61,31 +61,59 @@ export const requestConfig: RequestConfig = {
   },
   requestInterceptors: [
     async (url: string, options: any) => {
-      // 非鉴权接口
-      const isLoginRequest =
-        url.includes('/login') || url.includes('/token/refresh');
-      if (isLoginRequest) {
+      console.log(`[Request Interceptor] Request URL: ${url}`);
+      // 精确匹配：只有初次登录和刷新 Token 不需要带 Authorization
+      const isInitialLogin = url === '/api/login';
+      const isTokenRefresh = url.includes('/token/refresh');
+
+      if (isInitialLogin || isTokenRefresh) {
+        console.log(`[Request Interceptor] Skipping Auth header for: ${url}`);
         return { url, options };
       }
 
       let access = true;
+      const accessToken = getLocalAccessToken();
+      console.log(
+        `[Request Interceptor] Local AccessToken found: ${
+          accessToken ? 'Yes' : 'No'
+        }`,
+      );
+
       if (!isLogined()) {
+        console.log('[Request Interceptor] Not logined, attempting refresh...');
         // refresh token 也要过期的 token 判断是否同一用户
-        const accessToken = getLocalAccessToken();
-        options.headers.Authorization = `Bearer ${accessToken}`;
-        const response = await tokenRefresh(options);
-        if (response.code === 200) {
-          LoginHandler(parseAccessToken(response.data.accessToken));
+        if (accessToken) {
+          options.headers.Authorization = `Bearer ${accessToken}`;
+          try {
+            const response = await tokenRefresh(options);
+            if (response.code === 200) {
+              console.log('[Request Interceptor] Token refresh success');
+              LoginHandler(parseAccessToken(response.data.accessToken));
+            } else {
+              access = false;
+            }
+          } catch (e) {
+            console.error('[Request Interceptor] Token refresh failed', e);
+            access = false;
+          }
         } else {
           access = false;
         }
       }
-      // refresh token 之后, 确保拿到的是最新的 token.
-      const accessToken = getLocalAccessToken();
-      options.headers.Authorization = `Bearer ${accessToken}`;
+
+      // 重新获取最新的 token
+      const latestToken = getLocalAccessToken();
+      if (latestToken) {
+        options.headers.Authorization = `Bearer ${latestToken}`;
+        console.log(
+          `[Request Interceptor] Added Authorization header for: ${url}`,
+        );
+      }
 
       if (!access) {
-        console.log(`cancel request ${url}`);
+        console.warn(
+          `[Request Interceptor] Access denied for ${url}, redirecting...`,
+        );
         return new Promise(() => {});
       }
       return { url, options };

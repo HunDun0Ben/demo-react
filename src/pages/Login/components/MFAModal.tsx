@@ -21,7 +21,6 @@ const MFAModal: React.FC<MFAModalProps> = ({
     try {
       const response = await verifyMFA(values);
       if (response.code === 200 && response.data?.accessToken) {
-        message.success('验证成功');
         onSuccess(response.data.accessToken);
         form.resetFields();
       } else {
