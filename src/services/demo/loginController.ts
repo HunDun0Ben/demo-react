@@ -35,3 +35,21 @@ export async function tokenRefresh(options?: { [key: string]: any }) {
     },
   );
 }
+
+/** MFA 验证 POST /login/mfa-verify */
+export async function verifyMFA(
+  body: API.MFAVerifyRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.AppRes & { data?: API.LoginResponse }>(
+    `/api/login/mfa-verify`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}

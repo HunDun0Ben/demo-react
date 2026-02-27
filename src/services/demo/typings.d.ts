@@ -31,6 +31,15 @@ declare namespace API {
   type LoginResponse = {
     /** JWT 访问令牌 */
     accessToken?: string;
+    /** MFA 是否必要 */
+    mfa_required?: boolean;
+    /** MFA 类型列表 */
+    required_types?: string[];
+  };
+
+  type MFAVerifyRequest = {
+    /** TOTP 验证码 */
+    code: string;
   };
 
   type LotteryResult = {
