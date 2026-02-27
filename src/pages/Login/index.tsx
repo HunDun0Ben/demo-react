@@ -25,7 +25,12 @@ const LoginPage: React.FC = () => {
 
       if (mfa_required) {
         // 保存受限 Token
-        LoginHandler(parseAccessToken(accessToken!));
+        if (accessToken) {
+          LoginHandler(parseAccessToken(accessToken));
+          setIsMFAModalVisible(true);
+        } else {
+          message.error('MFA 认证需要访问令牌，但未获取到。');
+        }
         setIsMFAModalVisible(true);
       } else {
         LoginHandler(parseAccessToken(accessToken!));
@@ -42,7 +47,8 @@ const LoginPage: React.FC = () => {
     setIsMFAModalVisible(false);
     LoginHandler(parseAccessToken(fullToken));
     await refresh();
-    message.success('验证成功');
+    await refresh();
+    history.push('/home');
     history.push('/home');
   };
 
