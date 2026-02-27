@@ -44,6 +44,13 @@ export const requestConfig: RequestConfig = {
             NoLoginedHandler();
             message.info('登录已过期. 请重新登录.');
           }
+        } else if (
+          error.response.status === 403 &&
+          error.response.data?.message === 'MFA_REQUIRED'
+        ) {
+          NoLoginedHandler();
+          history.push(loginPath);
+          message.warning('该操作需要多因素认证，请重新登录。');
         } else {
           message.error(error.response.data?.message || '请求失败');
         }
