@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant User
+    participant Login as Login Page (with MFA Modal)
+    participant Service as Login Controller
+    participant Auth as Auth Utils
+    participant Storage as LocalStorage
+
+    User->>Login: 输入用户名/密码
+    Login->>Service: POST /api/login
+    Service-->>Login: 200 (mfa_required: true, accessToken: RESTRICTED)
+    Login->>Auth: LoginHandler(RESTRICTED)
+    Auth->>Storage: 保存受限 Token
+    Login->>Login: 显示 MFA 验证弹框
+    User->>Login: 在弹框中输入 TOTP 验证码
+    Login->>Service: POST /api/login/mfa-verify (带受限 Token)
+    Service-->>Login: 200 (accessToken: FULL)
+    Login->>Auth: LoginHandler(FULL)
+    Auth->>Storage: 更新为正式 Token
+    Login->>Login: 关闭弹框
+    Login->>User: 跳转到首页
