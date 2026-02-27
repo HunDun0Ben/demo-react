@@ -3,10 +3,12 @@ import { isLogined, LoginHandler, parseAccessToken } from '@/utils/auth';
 import { Button, Form, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { history, useModel } from 'umi';
+import MFAModal from './components/MFAModal';
 
 const LoginPage: React.FC = () => {
   const { refresh } = useModel('@@initialState');
   const [loading, setLoading] = useState(false);
+  const [isMFAModalVisible, setIsMFAModalVisible] = useState(false);
 
   useEffect(() => {
     if (isLogined()) {
@@ -19,13 +21,35 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await login(req);
-      LoginHandler(parseAccessToken(response.data.accessToken));
-      await refresh();
-      message.success('登录成功');
-      history.push('/home');
+      const { accessToken, mfa_required } = response.data || {};
+
+      if (mfa_required) {
+        // 保存受限 Token
+        if (accessToken) {
+          LoginHandler(parseAccessToken(accessToken));
+          setIsMFAModalVisible(true);
+        } else {
+          message.error('MFA 认证需要访问令牌，但未获取到。');
+        }
+        setIsMFAModalVisible(true);
+      } else {
+        LoginHandler(parseAccessToken(accessToken!));
+        await refresh();
+        message.success('登录成功');
+        history.push('/home');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMFASuccess = async (fullToken: string) => {
+    setIsMFAModalVisible(false);
+    LoginHandler(parseAccessToken(fullToken));
+    await refresh();
+    await refresh();
+    history.push('/home');
+    history.push('/home');
   };
 
   return (
@@ -49,6 +73,11 @@ const LoginPage: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
+      <MFAModal
+        visible={isMFAModalVisible}
+        onCancel={() => setIsMFAModalVisible(false)}
+        onSuccess={handleMFASuccess}
+      />
     </div>
   );
 };
