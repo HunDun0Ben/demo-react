@@ -49,7 +49,8 @@ export const requestConfig: RequestConfig = {
           error.response.data?.message === 'MFA_REQUIRED'
         ) {
           NoLoginedHandler();
-          history.push(loginPath);
+          NoLoginedHandler();
+          message.warning('该操作需要多因素认证，请重新登录。');
           message.warning('该操作需要多因素认证，请重新登录。');
         } else {
           message.error(error.response.data?.message || '请求失败');
