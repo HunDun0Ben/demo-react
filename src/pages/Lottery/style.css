@@ -1,0 +1,190 @@
+/* 老虎机主体外壳 - 极致拉丝金属质感 */
+.slot-machine-card {
+  background: linear-gradient(145deg, #e6e6e6, #fff) !important;
+  border: 2px solid #fff !important;
+  border-radius: 45px !important; /* 稍微加大圆角 */
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 25%),
+    inset 0 2px 0 rgba(255, 255, 255, 80%), inset 0 -2px 5px rgba(0, 0, 0, 10%) !important;
+  overflow: hidden;
+
+  --vibration-intensity: 0;
+}
+
+/* 内部面板 - 增加外边距和内边距，让空间更充裕 */
+.slot-panel-inner {
+  background: linear-gradient(180deg, #d8d8d8 0%, #bebebe 100%);
+  padding: 50px 40px; /* 增加内边距从 40px 25px -> 50px 40px */
+  border-radius: 35px;
+  border: 3px solid #aaa;
+  box-shadow: inset 0 10px 25px rgba(0, 0, 0, 18%);
+  margin: 15px; /* 增加外边距 */
+}
+
+/* 统一的摇奖行 - 增加宽度感和内部间距 */
+.slot-main-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 35px 25px; /* 增加内边距从 25px 15px -> 35px 25px */
+  background: linear-gradient(180deg, #888 0%, #aaa 50%, #888 100%);
+  border-radius: 22px;
+  border-top: 5px solid #666;
+  border-bottom: 5px solid #eee;
+  box-shadow: inset 0 20px 40px rgba(0, 0, 0, 45%);
+  gap: 15px; /* 增加转轴间的间距从 8px -> 15px */
+}
+
+/* 转轴窗口 - 保持 100px 高度但增加圆角和阴影细节 */
+.slot-reel-container {
+  display: inline-block;
+  width: 82px;
+  height: 100px;
+  background: #fff;
+  border: 2px solid #444;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 18px 25px rgba(0, 0, 0, 60%),
+    inset 0 -18px 25px rgba(0, 0, 0, 60%), 0 6px 12px rgba(0, 0, 0, 25%);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 锁定状态 - 强化呼吸动效 */
+.locked {
+  border: 4px solid #ff9c12;
+  background: #fffdf0;
+  box-shadow: 0 0 40px rgba(255, 156, 18, 60%),
+    inset 0 0 20px rgba(255, 156, 18, 15%), inset 0 18px 25px rgba(0, 0, 0, 60%),
+    inset 0 -18px 25px rgba(0, 0, 0, 60%);
+  transform: scale(1.1) translateY(-4px); /* 锁定瞬间弹起更高一点 */
+  z-index: 10;
+}
+
+.locked.back-zone {
+  border-color: #52c41a;
+  background: #f6ffed;
+  box-shadow: 0 0 40px rgba(82, 196, 26, 60%),
+    inset 0 18px 25px rgba(0, 0, 0, 60%), inset 0 -18px 25px rgba(0, 0, 0, 60%);
+}
+
+/* 分隔器 - 增加两侧边距 */
+.slot-divider {
+  width: 10px;
+  height: 90px;
+  background: linear-gradient(90deg, #555 0%, #eee 50%, #555 100%);
+  margin: 0 25px; /* 增加两侧间距从 12px -> 25px */
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 50%);
+}
+
+/* 玻璃质感遮罩 */
+.slot-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 45%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.slot-mask.top {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 45%) 0%,
+    transparent 100%
+  );
+}
+
+.slot-mask.bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 45%) 0%, transparent 100%);
+}
+
+.slot-mask.glass-shine {
+  top: 50%;
+  height: 2px;
+  background: rgba(255, 255, 255, 50%);
+  transform: translateY(-50%);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 40%);
+}
+
+/* 数字居中校对 */
+.slot-number {
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  font-size: 42px;
+  font-weight: 900;
+  font-family: 'Arial Black', Gadget, sans-serif;
+  color: #1a1a1a;
+  text-shadow: 1px 1px 0 #fff, -0.5px -0.5px 0 rgba(0, 0, 0, 10%);
+}
+
+/* 启动重震动 */
+.shaking-heavy {
+  animation: machine-shake-heavy 0.12s infinite;
+}
+
+@keyframes machine-shake-heavy {
+  0% {
+    transform: translate(4px, 4px);
+  }
+
+  25% {
+    transform: translate(-4px, -5px);
+  }
+
+  50% {
+    transform: translate(-5px, 2px);
+  }
+
+  100% {
+    transform: translate(4px, -3px);
+  }
+}
+
+.vibration-decay {
+  animation: machine-jitter-dynamic 0.1s infinite linear;
+}
+
+@keyframes machine-jitter-dynamic {
+  0% {
+    transform: translate(
+      calc(var(--vibration-intensity) * 1.2px),
+      calc(var(--vibration-intensity) * 1.2px)
+    );
+  }
+
+  50% {
+    transform: translate(
+      calc(var(--vibration-intensity) * -1.5px),
+      calc(var(--vibration-intensity) * -1px)
+    );
+  }
+
+  100% {
+    transform: translate(
+      calc(var(--vibration-intensity) * 1.2px),
+      calc(var(--vibration-intensity) * 1.2px)
+    );
+  }
+}
+
+.slot-spin-btn {
+  height: 70px !important;
+  padding: 0 80px !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  background: linear-gradient(180deg, #ff4d4f 0%, #cf1322 100%) !important;
+  border: none !important;
+  box-shadow: 0 10px 0 #820014, 0 15px 25px rgba(0, 0, 0, 35%) !important;
+  border-radius: 40px !important;
+  transition: all 0.1s !important;
+  color: white !important;
+}
+
+.slot-spin-btn:active {
+  transform: translateY(8px) !important;
+  box-shadow: 0 2px 0 #820014 !important;
+}
