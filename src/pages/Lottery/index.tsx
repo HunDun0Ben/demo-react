@@ -8,10 +8,10 @@ import './style.css';
 const ANIMATION_CONFIG = {
   SHAKE_DURATION: 500,
   UPPER_DELAY_STEP: 600,
-  LOWER_DELAY_OFFSET: 5,
+  LOWER_DELAY_OFFSET: 6, // 调整 offset 确保在 upper 全部开始后才开始 lower
   UPPER_BASE_DURATION: 2.8,
-  LOWER_BASE_DURATION: 9.0,
-  SUCCESS_MESSAGE_DELAY: 500, // 动画结束后延迟显示成功消息
+  LOWER_BASE_DURATION: 11.0, // 增加基础时长，确保比最慢的前区(约9.8s)慢
+  SUCCESS_MESSAGE_DELAY: 500,
 };
 
 const SlotReel: React.FC<{
@@ -130,8 +130,6 @@ const LotteryPage: React.FC = () => {
         setNumbers(sortedData);
 
         // 动态计算总时长：取 lowerHalf 最后一个转轴的完成时间
-        // (idx + 5) * 600 + duration * 1000
-        // 目前 idx 为 0，duration 为 9.0
         const totalDuration =
           (0 + ANIMATION_CONFIG.LOWER_DELAY_OFFSET) *
             ANIMATION_CONFIG.UPPER_DELAY_STEP +
@@ -141,6 +139,7 @@ const LotteryPage: React.FC = () => {
         setTimeout(() => {
           setLoading(false);
           setIsSpinning(false);
+          setActiveCount(0); // 强制重置，确保停止震动
           message.success('🎯 尘埃落定！祝您大奖临门！');
         }, totalDuration);
       } else {
@@ -148,12 +147,14 @@ const LotteryPage: React.FC = () => {
         setLoading(false);
         setMachineShaking(false);
         setIsSpinning(false);
+        setActiveCount(0);
       }
     } catch (error) {
       message.error('抽奖请求异常，请稍后重试');
       setLoading(false);
       setMachineShaking(false);
       setIsSpinning(false);
+      setActiveCount(0);
     }
   };
 
@@ -189,10 +190,14 @@ const LotteryPage: React.FC = () => {
             </div>
 
             <div className="slot-main-row">
-              {numbers.upperHalf?.map((num, idx) => (
+              {/* 前区逻辑：统一处理渲染与占位，避免布局错乱 */}
+              {(numbers.upperHalf.length > 0
+                ? numbers.upperHalf
+                : [1, 2, 3, 4, 5, 6]
+              ).map((num, idx) => (
                 <SlotReel
                   key={`upper-${idx}`}
-                  target={num}
+                  target={numbers.upperHalf.length > 0 ? num : 0}
                   max={35}
                   isSpinning={isSpinning}
                   delay={idx * ANIMATION_CONFIG.UPPER_DELAY_STEP}
@@ -206,52 +211,24 @@ const LotteryPage: React.FC = () => {
 
               <div className="slot-divider"></div>
 
-              {numbers.lowerHalf?.map((num, idx) => (
-                <SlotReel
-                  key={`lower-${idx}`}
-                  target={num}
-                  max={12}
-                  isSpinning={isSpinning}
-                  delay={
-                    (idx + ANIMATION_CONFIG.LOWER_DELAY_OFFSET) *
-                    ANIMATION_CONFIG.UPPER_DELAY_STEP
-                  }
-                  duration={ANIMATION_CONFIG.LOWER_BASE_DURATION + idx * 2.0}
-                  color="#52c41a"
-                  isBackZone
-                  onLock={handleLock}
-                />
-              ))}
-
-              {/* 当没有数据时，显示占位转轴（与之前版本保持一致的视觉呈现，但不旋转） */}
-              {numbers.upperHalf.length === 0 &&
-                [1, 2, 3, 4, 5, 6].map((_, idx) => (
+              {/* 后区逻辑 */}
+              {(numbers.lowerHalf.length > 0 ? numbers.lowerHalf : [1]).map(
+                (num, idx) => (
                   <SlotReel
-                    key={`upper-placeholder-${idx}`}
-                    target={0}
-                    max={35}
-                    isSpinning={false}
-                    delay={0}
-                    duration={0}
-                    color="#ff9c12"
-                    onLock={handleLock}
-                  />
-                ))}
-              {numbers.lowerHalf.length === 0 && (
-                <>
-                  <div className="slot-divider"></div>
-                  <SlotReel
-                    key={`lower-placeholder-0`}
-                    target={0}
+                    key={`lower-${idx}`}
+                    target={numbers.lowerHalf.length > 0 ? num : 0}
                     max={12}
-                    isSpinning={false}
-                    delay={0}
-                    duration={0}
+                    isSpinning={isSpinning}
+                    delay={
+                      (idx + ANIMATION_CONFIG.LOWER_DELAY_OFFSET) *
+                      ANIMATION_CONFIG.UPPER_DELAY_STEP
+                    }
+                    duration={ANIMATION_CONFIG.LOWER_BASE_DURATION + idx * 2.0}
                     color="#52c41a"
                     isBackZone
                     onLock={handleLock}
                   />
-                </>
+                ),
               )}
             </div>
 
@@ -282,7 +259,5 @@ const LotteryPage: React.FC = () => {
     </PageContainer>
   );
 };
-
-export default LotteryPage;
 
 export default LotteryPage;
