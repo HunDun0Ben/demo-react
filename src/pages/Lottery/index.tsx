@@ -1,8 +1,18 @@
 import { lotteryBigLotteryRandom } from '@/services/demo/lotteryController';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './style.css';
+
+// 动画配置常量
+const ANIMATION_CONFIG = {
+  SHAKE_DURATION: 500,
+  UPPER_DELAY_STEP: 600,
+  LOWER_DELAY_OFFSET: 5,
+  UPPER_BASE_DURATION: 2.8,
+  LOWER_BASE_DURATION: 9.0,
+  SUCCESS_MESSAGE_DELAY: 500, // 动画结束后延迟显示成功消息
+};
 
 const SlotReel: React.FC<{
   target: number;
@@ -27,27 +37,33 @@ const SlotReel: React.FC<{
   const [isLocked, setIsLocked] = useState(false);
 
   useEffect(() => {
+    let lockTimer: NodeJS.Timeout;
+    let spinTimer: NodeJS.Timeout;
+
     if (isSpinning) {
       setIsLocked(false);
       const startJump = max * 6 + Math.floor(Math.random() * max);
       setOffset(startJump);
 
-      const timer = setTimeout(() => {
+      spinTimer = setTimeout(() => {
         const finalOffset = max * 12 + (target - 1);
         setOffset(finalOffset);
 
-        setTimeout(() => {
+        lockTimer = setTimeout(() => {
           setIsLocked(true);
           onLock();
         }, duration * 1000);
       }, delay);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(spinTimer);
+        clearTimeout(lockTimer);
+      };
     } else {
       setOffset(target > 0 ? target - 1 : 0);
       setIsLocked(false);
     }
-  }, [isSpinning, target, delay, duration, max]);
+  }, [isSpinning, target, delay, duration, max, onLock]);
 
   return (
     <div
@@ -61,7 +77,7 @@ const SlotReel: React.FC<{
       <div
         className="slot-reel-inner"
         style={{
-          transform: `translateY(-${offset * 100}px)`, // 修正为 100px
+          transform: `translateY(-${offset * 100}px)`,
           transition: isSpinning
             ? `transform ${duration}s cubic-bezier(0.12, 0, 0.1, 1)`
             : 'none',
@@ -84,11 +100,14 @@ const LotteryPage: React.FC = () => {
   const [machineShaking, setMachineShaking] = useState(false);
   const [activeCount, setActiveCount] = useState(0);
   const [numbers, setNumbers] = useState<API.LotteryResult>({
-    upperHalf: [1, 2, 3, 4, 5, 6],
-    lowerHalf: [1],
+    upperHalf: [],
+    lowerHalf: [],
   });
 
-  const handleLock = () => setActiveCount((prev) => Math.max(0, prev - 1));
+  const handleLock = useCallback(
+    () => setActiveCount((prev) => Math.max(0, prev - 1)),
+    [],
+  );
 
   const handleDraw = async () => {
     if (loading) return;
@@ -97,7 +116,7 @@ const LotteryPage: React.FC = () => {
     setMachineShaking(true);
     setActiveCount(7);
 
-    setTimeout(() => setMachineShaking(false), 500);
+    setTimeout(() => setMachineShaking(false), ANIMATION_CONFIG.SHAKE_DURATION);
 
     try {
       const response = await lotteryBigLotteryRandom();
@@ -110,17 +129,31 @@ const LotteryPage: React.FC = () => {
         setIsSpinning(true);
         setNumbers(sortedData);
 
+        // 动态计算总时长：取 lowerHalf 最后一个转轴的完成时间
+        // (idx + 5) * 600 + duration * 1000
+        // 目前 idx 为 0，duration 为 9.0
+        const totalDuration =
+          (0 + ANIMATION_CONFIG.LOWER_DELAY_OFFSET) *
+            ANIMATION_CONFIG.UPPER_DELAY_STEP +
+          ANIMATION_CONFIG.LOWER_BASE_DURATION * 1000 +
+          ANIMATION_CONFIG.SUCCESS_MESSAGE_DELAY;
+
         setTimeout(() => {
           setLoading(false);
           setIsSpinning(false);
           message.success('🎯 尘埃落定！祝您大奖临门！');
-        }, 11500);
+        }, totalDuration);
       } else {
         message.error('数据获取失败');
         setLoading(false);
+        setMachineShaking(false);
+        setIsSpinning(false);
       }
     } catch (error) {
+      message.error('抽奖请求异常，请稍后重试');
       setLoading(false);
+      setMachineShaking(false);
+      setIsSpinning(false);
     }
   };
 
@@ -162,8 +195,10 @@ const LotteryPage: React.FC = () => {
                   target={num}
                   max={35}
                   isSpinning={isSpinning}
-                  delay={idx * 600}
-                  duration={2.8 + idx * idx * 0.28}
+                  delay={idx * ANIMATION_CONFIG.UPPER_DELAY_STEP}
+                  duration={
+                    ANIMATION_CONFIG.UPPER_BASE_DURATION + idx * idx * 0.28
+                  }
                   color="#ff9c12"
                   onLock={handleLock}
                 />
@@ -177,13 +212,47 @@ const LotteryPage: React.FC = () => {
                   target={num}
                   max={12}
                   isSpinning={isSpinning}
-                  delay={(idx + 5) * 600}
-                  duration={9.0 + idx * 2.0}
+                  delay={
+                    (idx + ANIMATION_CONFIG.LOWER_DELAY_OFFSET) *
+                    ANIMATION_CONFIG.UPPER_DELAY_STEP
+                  }
+                  duration={ANIMATION_CONFIG.LOWER_BASE_DURATION + idx * 2.0}
                   color="#52c41a"
                   isBackZone
                   onLock={handleLock}
                 />
               ))}
+
+              {/* 当没有数据时，显示占位转轴（与之前版本保持一致的视觉呈现，但不旋转） */}
+              {numbers.upperHalf.length === 0 &&
+                [1, 2, 3, 4, 5, 6].map((_, idx) => (
+                  <SlotReel
+                    key={`upper-placeholder-${idx}`}
+                    target={0}
+                    max={35}
+                    isSpinning={false}
+                    delay={0}
+                    duration={0}
+                    color="#ff9c12"
+                    onLock={handleLock}
+                  />
+                ))}
+              {numbers.lowerHalf.length === 0 && (
+                <>
+                  <div className="slot-divider"></div>
+                  <SlotReel
+                    key={`lower-placeholder-0`}
+                    target={0}
+                    max={12}
+                    isSpinning={false}
+                    delay={0}
+                    duration={0}
+                    color="#52c41a"
+                    isBackZone
+                    onLock={handleLock}
+                  />
+                </>
+              )}
             </div>
 
             <div style={{ textAlign: 'center', marginTop: 50 }}>
@@ -213,5 +282,7 @@ const LotteryPage: React.FC = () => {
     </PageContainer>
   );
 };
+
+export default LotteryPage;
 
 export default LotteryPage;
